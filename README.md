@@ -6,7 +6,7 @@ This is a template project that captures my favorite starting point for writing 
 # Installation
 
   * install node.js:  see http://nodejs.org
-  * checkout code: git clone node-server-template
+  * checkout code: git clone https://github.com/braitz/node-server-template.git
   * install library dependencies
     cd node-server-template
     npm install -d
