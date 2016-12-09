@@ -4,7 +4,7 @@ module.exports.Server = Server;
 
 // ===== Command Line =============================================================================
 
-var port = 3000;
+var port = 6000;
 var usage = ''
   + 'Usage: app.js [options]'
   + '\n'
@@ -51,7 +51,8 @@ if (printRoutes) {
 // Last safety net
 process.on('uncaughtException', function(error) {
   var errorMessage = "UNCAUGHT EXCEPTION: " + (error.stack ? error.stack : error);
-  Server.shutdown(errorMessage);
+  console.log("err"+errorMessage);
+  //Server.close(errorMessage);
 });
 
 // initialize and start server
