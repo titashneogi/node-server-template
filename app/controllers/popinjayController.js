@@ -84,7 +84,7 @@ function fetchNews(req, res, next)
       var newsCast = "News on "+topic;
 
 		//for (var i=0;i<jsonRes.length;i++)
-    for (var i=0;i<3;i++) 
+    for (var i=0;i<1;i++) 
      {
 		
       var summary =  urlencode(jsonRes[i].title+jsonRes[i].summary);
