@@ -5,7 +5,9 @@ var fs = require('fs');
 var REQUEST 		= require('request');
 
 var Stamplay = require('stamplay')
-var stamplay = new Stamplay('akashvani', '96db036cd7b565904e0dfc9aa9c0348efe61cc173a5e631f2fbf43af44a2cd83')
+var stamplay = new Stamplay('akashvani', '96db036cd7b565904e0dfc9aa9c0348efe61cc173a5e631f2fbf43af44a2cd83');
+
+var urlencode = require('urlencode');
 
 
 
@@ -15,10 +17,12 @@ var stamplay = new Stamplay('akashvani', '96db036cd7b565904e0dfc9aa9c0348efe61cc
 function record(req, res, next) {
 
   
-  var content = req.body.content;
+  var content = urlencode.decode(req.body.content);
   var userHandle = req.body.handle;
   var topic = req.body.topic;
   
+
+  console.log("here",content);
 // Import the built-in Node.js filesystem module
 
 // Create a new AWS Polly object
@@ -77,12 +81,15 @@ function fetchNews(req, res, next)
 		} else {
 			
 		  var jsonRes = body;
-      var newsCast = "News on "+topic+"\n";
+      var newsCast = "News on "+topic;
 
-		for (var i=0;i<jsonRes.length;i++) 
+		//for (var i=0;i<jsonRes.length;i++)
+    for (var i=0;i<3;i++) 
      {
 		
-      newsCast = newsCast + jsonRes[i].title+jsonRes[i].summary+"\n";
+      var summary =  urlencode(jsonRes[i].title+jsonRes[i].summary);
+     
+      newsCast = newsCast + summary;
 			
     };
       
