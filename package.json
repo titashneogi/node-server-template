@@ -7,10 +7,12 @@
     "aws-sdk": "^2.7.10",
     "express": "2.5.8",
     "request": "^2.79.0",
+    "rsj": "0.0.4",
     "s3-upload-stream": "^1.0.7",
     "stamplay": "^1.0.8",
     "underscore": "1.2.2",
-    "urlencode": "^1.1.0"
+    "urlencode": "^1.1.0",
+    "word-count": "^0.2.2"
   },
   "dev-dependencies": {
     "should": "0.0.4",

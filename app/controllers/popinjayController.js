@@ -1,4 +1,6 @@
 var controller = require('./controller');
+
+var recordUtils = require('../../lib/recordutils.js');
 require('../../lib/awsauth.js');
 var AWS = require('aws-sdk');
 var fs = require('fs');
@@ -8,7 +10,7 @@ var Stamplay = require('stamplay')
 var stamplay = new Stamplay('akashvani', '96db036cd7b565904e0dfc9aa9c0348efe61cc173a5e631f2fbf43af44a2cd83');
 
 var urlencode = require('urlencode');
-
+var count = require('word-count');
 
 
 /**
@@ -65,10 +67,17 @@ function fetchNews(req, res, next)
 {
 
     var userHandle = req.body.handle;
-    var topic = req.body.topic;
+
+
+    var topic = req.body.topic.replace("#aikashvani","").trim();
 
     var erBaseUrl  = "http://c813255f.ngrok.io/events?location=India&keyword="+topic;
 	  var erNewsData = [];
+
+    var finalFileName = userHandle+"_"+topic+".mp3";
+
+    console.log("searching for", topic);
+
 
 	REQUEST({
 		url: erBaseUrl,
@@ -83,48 +92,47 @@ function fetchNews(req, res, next)
 		  var jsonRes = body;
       var newsCast = "News on "+topic;
 
-		//for (var i=0;i<jsonRes.length;i++)
-    for (var i=0;i<1;i++) 
+     //console.log("the news is ",jsonRes);
+
+		for (var i=0;i<jsonRes.length;i++)
+    //for (var i=0;i<1;i++) 
      {
 		
-      var summary =  urlencode(jsonRes[i].title+jsonRes[i].summary);
+      console.log("title length ", count(jsonRes[i].title));
+      console.log("sum length", count(jsonRes[i].summary));
+
+      var newsCast =  jsonRes[i].title+jsonRes[i].summary+" .   Next news    ";
+    
      
-      newsCast = newsCast + summary;
-			
-    };
-      
-    console.log("saving to stamplay data now ",newsCast);
-    var completePacket = 
+     //make the dir by the name of userhandle
+      if (!fs.existsSync(userHandle))
       {
-            "news": newsCast,
-            "userhandle": userHandle
-      };
-
-       /**
-           * 
-           * save the data to stamplay which will trigger a 
-           * fetchnews api call from popinjay
-           */
-         stamplay.Object('newscast').save(completePacket, function(error, result)
-         {
-                if(!error)
-                {
-                    //send response here
-                    console.log("news saved in stamplay");
-                    controller.sendNext(req, res, next, undefined, {status:true});
-                }
-                else
-                {
-                  console.log(error);
-                  controller.sendNext(req, res, next, undefined, {status:false});
-                }
-           });
-
+          fs.mkdirSync(userHandle);
+      }
+      var mp3FileName = "./"+userHandle+"/"+topic+i+".mp3";
+      /**
+       * 
+       * call the recording service to record this 
+       * packet - workaround to avoid the 3K char limit
+       * for recorder
+       */
+			
+       console.log("recording ",mp3FileName, i, jsonRes.length);
+       recordUtils.internalRecord(newsCast, mp3FileName, userHandle, jsonRes.length, finalFileName);     
+    };
 		}
+
+    controller.sendNext(req, res, next, undefined, {status:true});
+     
 	});
 
 }
 
+
+/**
+ * 
+ * duplicate for now
+ */
 
 function upload(pathToAudio, fileName, userHandle)
 {
@@ -152,22 +160,12 @@ upload.on('error', function (error) {
   console.log(error);
 });
  
-/* Handle progress. Example details object:
-   { ETag: '"f9ef956c83756a80ad62f54ae5e7d34b"',
-     PartNumber: 5,
-     receivedSize: 29671068,
-     uploadedSize: 29671068 }
-*/
+
 upload.on('part', function (details) {
   console.log(details);
 });
  
-/* Handle upload completion. Example details object:
-   { Location: 'https://bucketName.s3.amazonaws.com/filename.ext',
-     Bucket: 'bucketName',
-     Key: 'filename.ext',
-     ETag: '"bf2acbedf84207d696c8da7dbb205b9f-5"' }
-*/
+
 upload.on('uploaded', function (details) {
   console.log(details);
 });
