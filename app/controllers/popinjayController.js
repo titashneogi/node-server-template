@@ -71,7 +71,7 @@ function fetchNews(req, res, next)
 
     var topic = req.body.topic.replace("#aikashvani","").trim();
 
-    var erBaseUrl  = "http://c813255f.ngrok.io/events?location=India&keyword="+topic;
+    var erBaseUrl  = "http://54.89.52.122:2000?keyword="+topic;
 	  var erNewsData = [];
 
     var finalFileName = userHandle+"_"+topic+".mp3";
@@ -99,9 +99,9 @@ function fetchNews(req, res, next)
      {
 		
       console.log("title length ", count(jsonRes[i].title));
-      console.log("sum length", count(jsonRes[i].summary));
+      console.log("sum length", count(jsonRes[i].description));
 
-      var newsCast =  jsonRes[i].title+jsonRes[i].summary+" .   Next news    ";
+      var newsCast =  jsonRes[i].title+jsonRes[i].description+" .   Next news    ";
     
      
      //make the dir by the name of userhandle
