@@ -71,10 +71,18 @@ function fetchNews(req, res, next)
 
     var topic = req.body.topic.replace("#aikashvani","").trim();
 
+    /**
+       * 
+       * check if topic is multiword then replace it with single for foldernaming
+       */
+
+      var fileName = topic.replace(" ","_");
+      var targetFolder = userHandle+"_"+fileName;
+
     var erBaseUrl  = "http://54.89.52.122:2000?keyword="+topic;
 	  var erNewsData = [];
 
-    var finalFileName = userHandle+"_"+topic+".mp3";
+    var finalFileName = userHandle+"_"+fileName+".mp3";
 
     console.log("searching for", topic);
 
@@ -103,13 +111,19 @@ function fetchNews(req, res, next)
 
       var newsCast =  jsonRes[i].title+jsonRes[i].description+" .   Next news    ";
     
+      
      
-     //make the dir by the name of userhandle
-      if (!fs.existsSync(userHandle))
+     //make the dir by the name of userhandle and topic concat
+      if (!fs.existsSync(targetFolder))
       {
-          fs.mkdirSync(userHandle);
+          
+          fs.mkdirSync(targetFolder);
       }
-      var mp3FileName = "./"+userHandle+"/"+topic+i+".mp3";
+
+      
+
+
+      var mp3FileName = "./"+targetFolder+"/"+fileName+i+".mp3";
       /**
        * 
        * call the recording service to record this 
@@ -118,7 +132,7 @@ function fetchNews(req, res, next)
        */
 			
        console.log("recording ",mp3FileName, i, jsonRes.length);
-       recordUtils.internalRecord(newsCast, mp3FileName, userHandle, jsonRes.length, finalFileName);     
+       recordUtils.internalRecord(newsCast, mp3FileName, targetFolder, jsonRes.length, finalFileName);     
     };
 		}
 
